@@ -91,3 +91,12 @@ def test_cli_local_apply_rejected_before_authentication(tmp_path, capsys, monkey
     path.write_bytes(feed([event()]))
     assert main(["sync", "--apply", "--file", str(path)]) == 1
     assert "local feed" in capsys.readouterr().err.lower()
+
+
+def test_removed_managed_appointment_recreates_with_new_transaction(config, store, now):
+    graph = FakeGraph()
+    raw = feed([event()])
+    run(config, graph, raw, True, now, store)
+    graph.events.clear()
+    run(config, graph, raw, True, now, store)
+    assert graph.creates == 2 and len(graph.events) == 1

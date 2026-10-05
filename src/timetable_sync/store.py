@@ -55,6 +55,8 @@ class Store:
 
     def save(self, key, data):
         self.db.execute("INSERT OR REPLACE INTO events VALUES (?,?)", (key, json.dumps(data)))
+        # Retire completed attempts so a future recreation gets a new identifier.
+        self.db.execute("DELETE FROM operations WHERE key=?", (key,))
         self.db.commit()
 
     def delete(self, key):
