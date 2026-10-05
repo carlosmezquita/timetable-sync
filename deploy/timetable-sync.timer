@@ -1,0 +1,12 @@
+[Unit]
+Description=Check timetable every five minutes
+
+[Timer]
+OnCalendar=*:0/5
+Persistent=true
+RandomizedDelaySec=5
+AccuracySec=1
+Unit=timetable-sync.service
+
+[Install]
+WantedBy=timers.target
