@@ -30,9 +30,9 @@ Private .env contains the feed URL, client ID and encryption key. It is excluded
 
 School credentials identify you. An Entra app registration identifies the application.
 
-1. Open [Microsoft Entra](https://entra.microsoft.com/), App registrations â†’ New registration. Use a single-tenant registration if your school permits it.
+1. Open [Microsoft Entra](https://entra.microsoft.com/), select **App registrations**, then **New registration**. Use a single-tenant registration if your school permits it.
 2. Set TSYNC_CLIENT_ID to Application (client) ID and TSYNC_TENANT_ID to Directory (tenant) ID in .env.
-3. Authentication â†’ Advanced settings: enable **Allow public client flows** for device-code sign-in. No client secret is needed.
+3. **Authentication**, then **Advanced settings**: enable **Allow public client flows** for device-code sign-in. No client secret is needed.
 4. API permissions: add Microsoft Graph **delegated Calendars.ReadWrite**. School administrator consent may be required.
 5. Sign in, then review a live preview before applying.
 
@@ -90,6 +90,6 @@ The five-minute timer cannot guarantee instant updates. Publication delays, sour
 
 health fails when the last applied sync is older than 15 minutes or has warnings/held changes. Optional HTTPS TSYNC_HEARTBEAT_URL is called after an applied run; use a dead-man monitor to detect a stopped timer. Inspect health/status for held changes.
 
-[Micro deployment](docs/deployment.md) Â· [Architecture](docs/architecture.md) Â· [Portfolio evidence](docs/portfolio.md)
+[Micro deployment](docs/deployment.md) | [Architecture](docs/architecture.md) | [Portfolio evidence](docs/portfolio.md)
 
 All test/demo events are synthetic. Feed URLs, tokens, state, backups and real timetable data must stay outside Git.
