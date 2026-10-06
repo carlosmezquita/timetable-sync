@@ -1,6 +1,6 @@
 # Architecture
 
-Pipeline: fetch â†’ validate/expand â†’ reconcile â†’ Outlook writes â†’ checkpoint.
+Pipeline: fetch -> validate/expand -> reconcile -> Outlook writes -> checkpoint.
 
 SQLite stores the last applied occurrence, Outlook ID, availability preference and missing-event evidence. The parser uses recurrence family and original date for CMIS identity, and UID plus original recurrence time for generic feeds. CMIS numbered UID prefixes describe segments, not individual classes. Conflicting identities abort parsing.
 

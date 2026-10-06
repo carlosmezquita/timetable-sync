@@ -111,9 +111,9 @@ def parse_feed(
                 if module_match and len(lines) > 1
                 else str(event.get("SUMMARY", "Class")).strip()
             )
-            title = " Â· ".join(part for part in [module, module_title] if part)
+            title = " - ".join(part for part in [module, module_title] if part)
             if activity != "Other":
-                title += " â€” " + activity
+                title += " - " + activity
             session = Session(
                 key,
                 family,

@@ -184,7 +184,7 @@ def main(argv=None):
             for action in [] if args.summary else result["actions"]:
                 session = action["session"]
                 print(
-                    f"{action['kind']:9} {action['key']} {session['start']} {session['title']} [{action.get('show_as', '')}] â€” {action['reason']}"
+                    f"{action['kind']:9} {action['key']} {session['start']} {session['title']} [{action.get('show_as', '')}] - {action['reason']}"
                 )
             for warning in result["warnings"]:
                 print("WARNING: " + warning)
