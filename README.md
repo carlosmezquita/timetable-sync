@@ -90,6 +90,6 @@ The five-minute timer cannot guarantee instant updates. Publication delays, sour
 
 health fails when the last applied sync is older than 15 minutes or has warnings/held changes. Optional HTTPS TSYNC_HEARTBEAT_URL is called after an applied run; use a dead-man monitor to detect a stopped timer. Inspect health/status for held changes.
 
-[Micro deployment](docs/deployment.md) | [Architecture](docs/architecture.md) | [Portfolio evidence](docs/portfolio.md)
+[Micro deployment](docs/deployment.md) | [Architecture](docs/architecture.md)
 
 All test/demo events are synthetic. Feed URLs, tokens, state, backups and real timetable data must stay outside Git.
