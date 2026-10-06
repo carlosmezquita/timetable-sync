@@ -1,8 +1,8 @@
 # Micro deployment
 
-Python + SQLite worker; no Docker or resident web server. The timer runs every five minutes. The included 192 MiB memory ceiling is provisional; measure live runs before relying on it. This implementation has not been deployed to Micro.
+Python + SQLite worker; no Docker or resident web server. The timer runs every five minutes. The included 192 MiB memory ceiling is provisional; measure live Outlook runs before relying on it. A VPS installation has been validated in feed-preview mode; live Outlook verification is still pending.
 
-Complete Entra authentication and a reviewed live preview first. Ubuntu 22.04 Python 3.10 is supported.
+Complete Entra authentication and a reviewed Outlook preview before enabling the timer. Ubuntu 22.04 Python 3.10 is supported.
 
 ~~~sh
 sudo apt-get update
@@ -50,3 +50,7 @@ The manual preview runs outside the service memory ceiling. Configure an externa
 Stop timer, back up state, upload an immutable commit release, install dependencies, run tests/preview, switch current, restart timer. Retain prior release and backup. Roll back code by restoring the previous symlink with the timer stopped. Restoring SQLite alone does not undo Outlook writes.
 
 GitHub Actions validates commits; release transfer is initially manual. Add SSH deployment after account setup and server resource measurements are verified.
+
+## Initial installation verification
+
+On 6 October 2026, a live-feed preview parsed 101 upcoming occurrences in 1.39 seconds with 46,088 KiB peak resident memory (about 45 MiB). It ran under the dedicated service user, filesystem restrictions and 192 MiB memory ceiling. This is one feed-only observation; it does not measure Microsoft Graph performance or prove ongoing reliability. The service and timer are installed, but the timer remains disabled until account setup and Outlook verification succeed.
