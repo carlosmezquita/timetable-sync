@@ -4,6 +4,8 @@ Convert a university iCalendar feed into useful Outlook appointments with module
 
 Working CLI and reconciliation engine; Microsoft sign-in and live deployment require account setup. Outlook's primary calendar is the destination. Google Calendar copying is not included: showing Outlook on your phone is a separate integration to verify.
 
+For a Microsoft 365-only route, see the [standard-connector Power Automate implementation](power-automate/README.md). It is supplied as a manual preview. A successful fresh feed download is required before applying or scheduling calendar changes.
+
 ## Use your local environment
 
 ~~~powershell

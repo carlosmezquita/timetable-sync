@@ -18,3 +18,11 @@ build/
 dist/
 coverage.xml
 .coverage
+
+# Power Automate exports can contain private feed and account configuration.
+power-automate/*.zip
+!power-automate/sample.zip
+power-automate/*config*.json
+private-*.json
+private-*.zip
+*.private.*
