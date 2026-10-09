@@ -147,7 +147,7 @@ def flow_definition(config: dict, authenticators: dict) -> dict:
     update_params.update({"item/" + field: "@items('Update_classes')['fields']['" + field + "']" for field in field_names})
     update_params.update({"item/recurrence": "none", "item/responseRequested": False,
         "item/showAs": "@if(equals(body('Read_update_target')['showAs'],items('Update_classes')['observedShowAs']),items('Update_classes')['fields']['showAs'],body('Read_update_target')['showAs'])",
-        "item/categories": "@coalesce(body('Read_update_target')?['categories'],json('[]'))",
+        "item/categories": "@if(empty(trim(coalesce(variables('Config')?['Rules']?['calendarCategory'],''))),coalesce(body('Read_update_target')?['categories'],json('[]')),union(coalesce(body('Read_update_target')?['categories'],json('[]')),createArray(trim(variables('Config')['Rules']['calendarCategory']))))",
         "item/importance": "@coalesce(body('Read_update_target')?['importance'],'normal')",
         "item/isReminderOn": "@coalesce(body('Read_update_target')?['isReminderOn'],true)",
         "item/reminderMinutesBeforeStart": "@coalesce(body('Read_update_target')?['reminderMinutesBeforeStart'],15)"})

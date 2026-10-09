@@ -78,7 +78,11 @@ function main(
   const outlook = JSON.parse(existingEventsJson) as OutlookEvent[];
   if (!Array.isArray(outlook) || outlook.length > 5000) throw new Error("Invalid Outlook scan.");
   const rules = JSON.parse(rulesJson) as Record<string, string>;
-  Object.keys(rules).forEach((selector) => { if (!["free", "busy"].includes(rules[selector])) throw new Error("Rules must use free or busy."); });
+  Object.keys(rules).forEach((selector) => {
+    if (selector === "calendarCategory") {
+      if (typeof rules[selector] !== "string") throw new Error("calendarCategory must be a category name.");
+    } else if (!["free", "busy"].includes(rules[selector])) throw new Error("Rules must use free or busy.");
+  });
   const start = londonWall(now.getTime()).substring(0, 10) + "T00:00:00";
   const end = new Date(Date.parse(start + "Z") + 365 * 86400000).toISOString().substring(0, 19);
   const sourceText = icsContent.startsWith('"') ? JSON.parse(icsContent) as string : icsContent;
@@ -267,10 +271,12 @@ function defaults(session: Session, rules: Record<string, string>): string {
   const chosen = selectors.find((selector) => !!rules[selector]);
   return chosen ? rules[chosen] : (["self directive studies", "self directed studies"].includes(session.activity.toLowerCase()) ? "free" : "busy");
 }
-function fields(session: Session, showAs: string, current: OutlookEvent | undefined, sourceId: string): Fields {
+function fields(session: Session, showAs: string, current: OutlookEvent | undefined, sourceId: string, category: string): Fields {
+  const categories = (current?.categories || []).slice();
+  if (category && !categories.includes(category)) categories.push(category);
   return {subject: session.title, start: session.start, end: session.end, timeZone: "GMT Standard Time",
     body: "<p>" + html(session.description).replace(/\n/g, "<br/>") + "</p><p><small>" + html(marker(sourceId, session.key)) + "</small></p>",
-    location: session.location, showAs, categories: current?.categories || [], importance: current?.importance || "normal",
+    location: session.location, showAs, categories, importance: current?.importance || "normal",
     isReminderOn: current?.isReminderOn ?? true, reminderMinutesBeforeStart: current?.reminderMinutesBeforeStart ?? 15, isAllDay: false};
 }
 function normalizedWall(raw: string, zone: string): string {
@@ -282,6 +288,7 @@ function normalizedWall(raw: string, zone: string): string {
   return londonWall(wallInstant(wall, zone));
 }
 function reconcile(sessions: Session[], outlook: OutlookEvent[], state: State, rules: Record<string, string>, sourceId: string, feedRunId: string, now: Date, start: string, end: string): Plan {
+  const category = (rules.calendarCategory || "").trim();
   const nextState = JSON.parse(JSON.stringify(state)) as State;
   const plan: Plan = {version: 1, sourceId, feedRunId, checkedAt: now.toISOString(), creates: [], updates: [], deletes: [], held: [], nextState, previousState: state, sessionCount: sessions.length};
   const managed: Record<string, OutlookEvent> = {}; const byKey: Record<string, Session> = {};
@@ -312,11 +319,11 @@ function reconcile(sessions: Session[], outlook: OutlookEvent[], state: State, r
     const override = manualChange ? current!.showAs : (saved?.override || (current && !saved ? current.showAs : ""));
     const showAs = explicit || override || defaults(session, rules);
     if (!["free", "tentative", "busy", "oof", "workingElsewhere", "unknown"].includes(showAs)) throw new Error("Invalid availability value.");
-    const desired = fields(session, showAs, current, sourceId);
+    const desired = fields(session, showAs, current, sourceId, category);
     const operation: Operation = {key: session.key, id: current?.id || "", fields: desired, observedShowAs: current?.showAs || showAs};
     if (!current) plan.creates.push(operation);
     const fingerprint = JSON.stringify([session.title, session.description, session.location, session.start, session.end]);
-    if (current && (current.subject !== desired.subject || normalizedWall(current.start, current.timeZone) !== desired.start || normalizedWall(current.end, current.timeZone) !== desired.end || current.location !== desired.location || current.showAs !== desired.showAs || saved?.fingerprint !== fingerprint)) plan.updates.push(operation);
+    if (current && (current.subject !== desired.subject || normalizedWall(current.start, current.timeZone) !== desired.start || normalizedWall(current.end, current.timeZone) !== desired.end || current.location !== desired.location || current.showAs !== desired.showAs || saved?.fingerprint !== fingerprint || (category && !(current.categories || []).includes(category)))) plan.updates.push(operation);
     nextState.events[session.key] = {id: current?.id || "", family: session.family, identity: session.identity, start: session.start, end: session.end, lastShowAs: showAs, override, missingSince: "", fingerprint};
   });
   missingKeys.forEach((key) => {

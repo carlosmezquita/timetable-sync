@@ -44,6 +44,25 @@ test('a successful plan writes a reviewable Preview worksheet', () => {
   assert.equal(previewRows[3][1],result.creates[0].fields.subject);
 });
 
+test('managed category is added to new appointments', () => {
+  const result=plan(calendar(base),[], '{}',now,'category-new',JSON.stringify({calendarCategory:'Timetable'}));
+  assert.ok(result.creates.every(op=>op.fields.categories.includes('Timetable')));
+});
+test('adding a category preserves existing labels and Free choice without repeat updates', () => {
+  const initial=plan(calendar(base));
+  const events=initial.creates.map((op,i)=>({...asOutlook(op,'category-'+i),categories:['Personal label'],showAs:'free'}));
+  const stored=commit(initial,initial.creates.map((op,i)=>({kind:'create',key:op.key,id:'category-'+i}))).stateJson;
+  const rules=JSON.stringify({calendarCategory:'Timetable'});
+  const amended=plan(calendar(base),events,stored,now,'category-update',rules);
+  assert.equal(amended.creates.length,0);
+  assert.equal(amended.updates.length,events.length);
+  amended.updates.forEach(op=>{assert.deepEqual(op.fields.categories,['Personal label','Timetable']);assert.equal(op.fields.showAs,'free');});
+  const committed=commit(amended,amended.updates.map(op=>({kind:'update',key:op.key,id:op.id})),stored).stateJson;
+  const updated=amended.updates.map(op=>asOutlook(op,op.id));
+  const repeated=plan(calendar(base),updated,committed,now,'category-repeat',rules);
+  assert.equal(repeated.updates.length,0);
+});
+
 test('weekly recurrence, title extraction and stable CMIS identity', () => {
   const sessions = parse(calendar(base)); assert.equal(sessions.length, 4);
   assert.equal(sessions[0].title, 'M12345 - Example course - Workshop');

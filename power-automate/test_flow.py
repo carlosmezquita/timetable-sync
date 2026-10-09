@@ -112,6 +112,9 @@ class WorkflowSafety(unittest.TestCase):
         self.assertIn("observedShowAs", update["item/showAs"])
         self.assertIn("Read_update_target", update["item/showAs"])
         self.assertIn("Read_update_target", update["item/categories"])
+        self.assertIn("union(", update["item/categories"])
+        self.assertIn("calendarCategory", update["item/categories"])
+        self.assertNotIn("['fields']['categories']", update["item/categories"])
         self.assertIn("Read_update_target", update["item/reminderMinutesBeforeStart"])
 
     def test_checkpoint_is_written_only_after_complete_operation_acknowledgements(self):

@@ -47,6 +47,8 @@ Only appointments carrying the source's `Timetable Sync [v1:...]` ownership mark
 
 Self Directive Studies / Self Directed Studies default to Free; other activities default to Busy. Outlook Web **Show as** edits are captured as occurrence preferences. Optional `Rules` in the flow's `Config` variable use lowercase selectors such as `activity:workshop`, `module:m12345`, or `module-activity:m12345|tutorial`, with values `free` or `busy`. An explicit `event:KEY` rule wins over a captured preference.
 
+Set `Rules.calendarCategory` to an existing Outlook category name, such as `Timetable`, to apply it to new and upcoming managed appointments. Outlook supplies the category's colour. Existing labels and Free/Busy choices remain; a missing required category triggers an update. Updates merge the required category with the latest labels read from Outlook, preserving category edits made after planning. Historical appointments outside the scan are left unchanged.
+
 Missing or cancelled appointments require two successful applied observations at least five minutes apart. More than ten deletions or 25% of the upcoming stored appointments are held. Historical appointments remain. Preview runs do not advance deletion confirmations.
 
 ## Applying and scheduling
